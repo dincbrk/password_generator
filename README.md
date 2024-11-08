@@ -80,9 +80,6 @@ Specify the password type with `-t` or `--type`:
 
 - If `--min-length` is greater than `--max-length`, the program will display an error and exit.
 
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
