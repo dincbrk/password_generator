@@ -17,7 +17,7 @@ A powerful command-line interface (CLI) password generator supporting Turkish ch
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/password-generator-cli.git
+   git clone https://github.com/dincbrk/password-generator-cli.git
    ```
 2. Navigate to the project directory:
    ```bash
