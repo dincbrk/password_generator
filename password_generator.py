@@ -4,8 +4,8 @@ import string
 import sys
 
 # Turkish character sets
-turkish_lowercase = "abcçdefgğhıijklmnoöprsştuüvyzxqw"
-turkish_uppercase = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZXQW"
+turkish_lowercase = "abcçdefgğhıijklmnoöprsştuüvyz"
+turkish_uppercase = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
 
 # Dictionary for password types, including Turkish characters
 PASSWORD_TYPES = {
@@ -26,10 +26,15 @@ PASSWORD_TYPES = {
     15: turkish_lowercase + turkish_uppercase + string.digits + string.punctuation,
 }
 
-# Password generation function
-def generate_password(min_length, max_length, charset):
-    length = random.randint(min_length, max_length)
-    return ''.join(random.choice(charset) for _ in range(length))
+# Password generation function with uniqueness check
+def generate_unique_password(min_length, max_length, charset, existing_passwords):
+    while True:
+        length = random.randint(min_length, max_length)
+        password = ''.join(random.choice(charset) for _ in range(length))
+        # Ensure the password is unique
+        if password not in existing_passwords:
+            existing_passwords.add(password)
+            return password
 
 # Main function
 def main():
@@ -42,7 +47,7 @@ def main():
             "2. Output to file only:\n"
             "   python password_generator.py --min-length 10 --max-length 15 --type 8 --count 3 --output file --filename my_passwords.txt\n\n"
             "3. Both CLI and file output:\n"
-            "   python password_generator.py --min-length 6 --max-length 10 --type 6 --count 10 --output both\n\n"
+            "   python password_generator.py --min-length 6 --max-length 10 --type 7 --count 10 --output both\n\n"
             "Note: Refer to 'PASSWORD_TYPES' dictionary for password type explanations."
         ),
         formatter_class=argparse.RawTextHelpFormatter
@@ -102,8 +107,11 @@ def main():
         print("Invalid password type selected.")
         sys.exit(1)
 
-    # Generate passwords
-    passwords = [generate_password(args.min_length, args.max_length, charset) for _ in range(args.count)]
+    # Set to store unique passwords
+    unique_passwords = set()
+
+    # Generate unique passwords
+    passwords = [generate_unique_password(args.min_length, args.max_length, charset, unique_passwords) for _ in range(args.count)]
 
     # Handle output
     if args.output in ["cli", "both"]:
