@@ -17,11 +17,11 @@ A powerful command-line interface (CLI) password generator supporting Turkish ch
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/dincbrk/password-generator-cli.git
+   git clone https://github.com/dincbrk/password_generator.git
    ```
 2. Navigate to the project directory:
    ```bash
-   cd password-generator-cli
+   cd password_generator
    ```
 
 ## Usage
