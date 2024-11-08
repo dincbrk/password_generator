@@ -4,33 +4,45 @@ import string
 import sys
 
 # Turkish character sets
-turkish_lowercase = "abcçdefgğhıijklmnoöprsştuüvyz"
-turkish_uppercase = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
+turkish_lowercase = "abcçdefgğhıijklmnoöprsştuüvyzqxw"
+turkish_uppercase = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZQXW"
 
 # Dictionary for password types, including Turkish characters
 PASSWORD_TYPES = {
-    1: turkish_lowercase,
-    2: turkish_uppercase,
-    3: string.digits,
-    4: string.punctuation,
-    5: turkish_lowercase + turkish_uppercase,
-    6: turkish_lowercase + string.digits,
-    7: turkish_lowercase + string.punctuation,
-    8: turkish_uppercase + string.digits,
-    9: turkish_uppercase + string.punctuation,
-    10: string.digits + string.punctuation,
-    11: turkish_lowercase + turkish_uppercase + string.digits,
-    12: turkish_lowercase + turkish_uppercase + string.punctuation,
-    13: turkish_lowercase + string.digits + string.punctuation,
-    14: turkish_uppercase + string.digits + string.punctuation,
-    15: turkish_lowercase + turkish_uppercase + string.digits + string.punctuation,
+    1: [turkish_lowercase],
+    2: [turkish_uppercase],
+    3: [string.digits],
+    4: [string.punctuation],
+    5: [turkish_lowercase, turkish_uppercase],
+    6: [turkish_lowercase, string.digits],
+    7: [turkish_lowercase, string.punctuation],
+    8: [turkish_uppercase, string.digits],
+    9: [turkish_uppercase, string.punctuation],
+    10: [string.digits, string.punctuation],
+    11: [turkish_lowercase, turkish_uppercase, string.digits],
+    12: [turkish_lowercase, turkish_uppercase, string.punctuation],
+    13: [turkish_lowercase, string.digits, string.punctuation],
+    14: [turkish_uppercase, string.digits, string.punctuation],
+    15: [turkish_lowercase, turkish_uppercase, string.digits, string.punctuation],
 }
 
-# Password generation function with uniqueness check
-def generate_unique_password(min_length, max_length, charset, existing_passwords):
+# Password generation function with each group ensured
+def generate_unique_password(min_length, max_length, charset_groups, existing_passwords):
     while True:
-        length = random.randint(min_length, max_length)
-        password = ''.join(random.choice(charset) for _ in range(length))
+        # Ensure at least one character from each required type
+        password_chars = [random.choice(group) for group in charset_groups]
+        
+        # Calculate remaining length after including one character from each group
+        remaining_length = random.randint(min_length, max_length) - len(password_chars)
+        
+        # Fill the remaining characters randomly from the combined character set
+        combined_charset = ''.join(charset_groups)
+        password_chars.extend(random.choice(combined_charset) for _ in range(remaining_length))
+        
+        # Shuffle to ensure randomness in the password
+        random.shuffle(password_chars)
+        password = ''.join(password_chars)
+        
         # Ensure the password is unique
         if password not in existing_passwords:
             existing_passwords.add(password)
@@ -101,9 +113,9 @@ def main():
         print("Error: Minimum length cannot be greater than maximum length.")
         sys.exit(1)
 
-    # Get the selected character set
-    charset = PASSWORD_TYPES.get(args.type)
-    if not charset:
+    # Get the selected character set groups
+    charset_groups = PASSWORD_TYPES.get(args.type)
+    if not charset_groups:
         print("Invalid password type selected.")
         sys.exit(1)
 
@@ -111,7 +123,15 @@ def main():
     unique_passwords = set()
 
     # Generate unique passwords
-    passwords = [generate_unique_password(args.min_length, args.max_length, charset, unique_passwords) for _ in range(args.count)]
+    passwords = [
+        generate_unique_password(
+            args.min_length, 
+            args.max_length, 
+            charset_groups, 
+            unique_passwords
+        ) 
+        for _ in range(args.count)
+    ]
 
     # Handle output
     if args.output in ["cli", "both"]:
