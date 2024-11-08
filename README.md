@@ -1,5 +1,3 @@
-# password_generator
-
 # Password Generator CLI with Turkish Character Support
 
 A powerful command-line interface (CLI) password generator supporting Turkish characters, multiple character types, and customizable password lengths.
